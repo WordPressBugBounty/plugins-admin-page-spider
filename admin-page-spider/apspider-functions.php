@@ -195,7 +195,11 @@ function apspider_get_wpdb_query(
 		global $globalquery;
 		global $newquery;
 		global $lvl;
-		$lvl = 0;
+			$lvl = 0;
+			// Always reset the accumulator to an empty array to avoid implicit conversion warnings
+			if ( ! is_array( $newquery ) ) {
+				$newquery = array();
+			}
 		foreach($globalquery as $key => $row)
 		{
 			if ($row->post_parent == $parent)
@@ -212,24 +216,20 @@ function apspider_get_wpdb_query(
 	// fetches the heirarchy and appends or recurses til it's no longer got children
 	function apspp_getchildscount($query,$parent){
 		global $lvl;
-		$childcounter = false;
-		
+		// Initialize as empty array to avoid deprecated automatic conversion of false to array in PHP 8.1+
+		$childcounter = array();
+
 		foreach($query as $key => $row)
 		{
 			if ($row->post_parent == $parent)
 			{
-				
 				$row->lvl = $lvl;
 				$childcounter[] = $row;
 			}
 		}
-		
-		if ( is_array($childcounter) || $childcounter !== false ) {
-			return count($childcounter);
-		}
-		else {
-			return 1;
-		}
+
+		// Return the number of children found (0 if none)
+		return count($childcounter);
 	}
 	
 	// runs a new query to get the child items of the current item to return all the children for a better constructed array.
@@ -237,27 +237,24 @@ function apspider_get_wpdb_query(
 		global $globalquery;
 		global $lvl;
 		global $newquery;
-		$children = array();
-		foreach($query as $key => $row)
-		{
-			if ($row->post_parent == $parent)
+			$children = array();
+			foreach($query as $key => $row)
 			{
-				if (apspp_getchildscount($query,$row->ID) > 0)
+				if ($row->post_parent == $parent)
 				{
-					$lvl++;
+					$has_children = apspp_getchildscount($query,$row->ID) > 0;
+					if ( $has_children ) {
+						$lvl++;
+					}
 					$row->lvl = $lvl;
 					$newquery[] = $row;
-					apspp_getchilditems($query,$row->ID);
+					if ( $has_children ) {
+						apspp_getchilditems($query,$row->ID);
+						$lvl--;
+					}
 				}
-				else
-				{
-					$newquery[] = $row;
-					
-				}
-				$lvl = $lvl - 1;
 			}
-		}
-		return $children;
+			return $children;
 	}
 	
 
@@ -273,6 +270,8 @@ function apspider_get_wpdb_query(
 			
 			global $globalquery;
 			global $newquery;
+				// Ensure a clean start
+				$newquery = array();
 			$globalquery = apspider_get_wpdb_query($post_type_slug, $order_by, $sort, $post_parent);
 			// loop through the global query from optional supplied parent to craft a list of pages with heirarchy 
 			$newquery = apspp_pagearray_cycle($globalquery, $post_parent);
