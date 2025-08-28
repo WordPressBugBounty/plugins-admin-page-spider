@@ -85,6 +85,9 @@ And much more!
 
 == Changelog ==
 
+= 3.35 = 
+* Fixed broken indentation missing declarations
+
 = 3.34 = 
 * PHP compatability fixes & general maintenance pass
 

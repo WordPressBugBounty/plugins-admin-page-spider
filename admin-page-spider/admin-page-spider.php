@@ -8,7 +8,7 @@ Author: J7Digital
 Author URI: https://profiles.wordpress.org/jatacid/
 Text Domain: admin-page-spider
 Domain Path: /languages
-Version: 3.34
+Version: 3.35
 License: GPLv2 or later
 
 This program is free software; you can redistribute it and/or

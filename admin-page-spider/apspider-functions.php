@@ -228,8 +228,12 @@ function apspider_get_wpdb_query(
 			}
 		}
 
-		// Return the number of children found (0 if none)
-		return count($childcounter);
+		if ( is_array($childcounter) && !empty($childcounter) ) {
+			return count($childcounter);
+		}
+		else {
+			return 1;
+		}
 	}
 	
 	// runs a new query to get the child items of the current item to return all the children for a better constructed array.
@@ -245,13 +249,16 @@ function apspider_get_wpdb_query(
 					$has_children = apspp_getchildscount($query,$row->ID) > 0;
 					if ( $has_children ) {
 						$lvl++;
-					}
-					$row->lvl = $lvl;
-					$newquery[] = $row;
-					if ( $has_children ) {
+						$row->lvl = $lvl;
+						$newquery[] = $row;
 						apspp_getchilditems($query,$row->ID);
-						$lvl--;
 					}
+					else{
+						$newquery[] = $row;
+					}
+
+				$lvl = $lvl - 1;
+
 				}
 			}
 			return $children;
