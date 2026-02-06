@@ -3,7 +3,7 @@ Contributors: jatacid
 Donate link: https://adminpagespider.com/
 Tags: beaver builder,divi,elementor,productivity,white label
 Requires at least: 4.3.0
-Tested up to: 6.8.2
+Tested up to: 6.8.3
 Stable tag: 4.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -84,6 +84,9 @@ And much more!
 3. screenshot-4.png
 
 == Changelog ==
+
+= 3.35 = 
+* Fixed error when trying to uninstall and added self database cleanup
 
 = 3.35 = 
 * Fixed broken indentation missing declarations
