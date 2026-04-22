@@ -8,7 +8,7 @@ Author: J7Digital
 Author URI: https://profiles.wordpress.org/jatacid/
 Text Domain: admin-page-spider
 Domain Path: /languages
-Version: 3.36
+Version: 3.37
 License: GPLv2 or later
 
 This program is free software; you can redistribute it and/or
@@ -60,18 +60,10 @@ function page_spider_init () {
 }
 
 
-// Deletes all settings upon plugin deactivation
+// Runs on plugin deactivation
 function apspider_plugin_deactivate(){
 	if ( ! current_user_can( 'activate_plugins' ) )
 		return;
-
-	// Include the fields array since it may not be loaded yet during deactivation
-	include_once 'apspider-adminfieldsarray.php';
-	global $fields;
-	// Cycle through the array & delete all options
-	foreach( $fields as $field ){
-		delete_option($field['uid'] );
-	}
 }
 
 //Adds all settings upon plugin activation
@@ -83,6 +75,10 @@ function apspider_plugin_activate(){
 
 // Cleans up all settings upon plugin uninstall
 function apspider_plugin_uninstall(){
+	// Define stub if the settings page hasn't been loaded yet
+	if ( ! function_exists( 'apspider_setup_sections' ) ) {
+		function apspider_setup_sections() {}
+	}
 	// Include the fields array
 	include_once 'apspider-adminfieldsarray.php';
 	global $fields;
